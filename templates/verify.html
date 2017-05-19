@@ -39,12 +39,18 @@
 	.button-error {
             background: rgb(202, 60, 60);
 	}
+        .top-space {
+            margin-top: 2cm;
+        }
+        .bottom-space {
+            margin-bottom: 1cm;
+        }
     </style>
 </head>
 <body>
     <div>
 	    <img src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
-        <p>Please upload a pdf certificate for verification</p>
+        <h3 class="top-space bottom-space">Please upload a pdf certificate for verification</h3>
         <form action="http://82.116.203.239:8080/verification" method="POST" enctype="multipart/form-data" class="pure-form">
             <fieldset>
                 <label for="file" class="pure-button button-secondary" id="fake-file">Select a PDF certificate file...</label>
@@ -65,6 +71,7 @@
 	    } else {
 		fake.setAttribute("class", "pure-button button-secondary button-warning");
                 fake.innerHTML = "Not a PDF. Please select a PDF certificate file...";
+		submit.setAttribute("disabled", "true");
 	    }
         }
     </script>
