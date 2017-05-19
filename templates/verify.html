@@ -1,11 +1,72 @@
 <html>
-   <body>
-   
-      <form action = "http://82.116.203.239:8080/verification" method = "POST" 
-         enctype = "multipart/form-data">
-         <input type = "file" name = "file"  />
-         <input type = "submit" value = "Verify" />
-      </form>
-      
-   </body>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blockchain Certificate Validation</title>
+    <style>
+        div {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            height: 50%;
+            padding: 20px;
+            text-align: center;
+            <!-- box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); -->
+        }
+        .pure-form label{
+            margin: 0;
+        }
+        .button-error,
+        .button-success,
+        .button-warning,
+        .button-secondary {
+            color: white;
+            border-radius: 4px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-secondary {
+            background: rgb(66, 184, 221);
+        }
+	.button-warning {
+            background: rgb(223, 117, 20);
+	}
+	.button-success {
+            background: rgb(28, 184, 65);
+	}
+	.button-error {
+            background: rgb(202, 60, 60);
+	}
+    </style>
+</head>
+<body>
+    <div>
+	    <img src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+        <p>Please upload a pdf certificate for verification</p>
+        <form action="http://82.116.203.239:8080/verification" method="POST" enctype="multipart/form-data" class="pure-form">
+            <fieldset>
+                <label for="file" class="pure-button button-secondary" id="fake-file">Select a PDF certificate file...</label>
+                <input type="file" name="file" id="file" style="display: none;" required />
+                <input type="submit" value="Verify" id="submit-form" class="pure-button pure-button-primary" disabled />
+            </fieldset>
+        </form>
+    </div>
+    <script>
+        var input = document.getElementById('file'); 
+        var fake = document.getElementById('fake-file'); 
+	var submit = document.getElementById('submit-form');
+        input.onchange = function () {
+            if (this.value && this.value.split('.').pop() == 'pdf') {
+                fake.innerHTML = this.value.split('\\').pop();
+		fake.setAttribute("class", "pure-button button-secondary button-success");
+		submit.removeAttribute("disabled");
+	    } else {
+		fake.setAttribute("class", "pure-button button-secondary button-warning");
+                fake.innerHTML = "Not a PDF. Please select a PDF certificate file...";
+	    }
+        }
+    </script>
+</body>
 </html>
