@@ -1,1 +1,90 @@
-success
+<html>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blockchain Certificate Validation</title>
+    <style>
+        @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+        .center-div {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            height: 50%;
+            padding: 20px;
+            text-align: center;
+            <!-- box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); -->
+        }
+        .pure-form label{
+            margin: 0;
+        }
+        .button-error,
+        .button-success,
+        .button-warning,
+        .button-secondary {
+            color: white;
+            border-radius: 4px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-secondary {
+            background: rgb(66, 184, 221);
+        }
+	.button-warning {
+            background: rgb(223, 117, 20);
+	}
+	.button-success {
+            background: rgb(28, 184, 65);
+	}
+	.button-error {
+            background: rgb(202, 60, 60);
+	}
+        .top-space-2 {
+            margin-top: 2cm;
+        }
+        .bottom-space-2 {
+            margin-bottom: 2cm;
+        }
+        .message-box {
+            margin: 10px 0px;
+            padding: 12px;
+            border-radius:.5em;
+            font-size: 125%;
+        }
+        .message-box-success {
+            color: white;
+            background-color: rgb(28, 184, 65)
+        }
+        .message-box-error {
+            color: white;
+            background-color: rgb(202, 60, 60)
+        }
+        .message-box i {
+            margin: 10px 12px;
+            font-size: 2em;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-div">
+        <img class="bottom-space-2" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+        {% if "_not_" not in result_text %}
+        <div class="message-box message-box-success">
+            <i class="fa fa-check"></i>
+            Certificate {{ filename }} is valid!
+        </div>
+        {% else %}
+        <div class="message-box message-box-error">
+            <i class="fa fa-times-circle"></i>
+            Certificate {{ filename }} is NOT valid!
+        </div>
+        {% endif %}
+        <div class="top-space-2">
+            <a class="pure-button button-secondary" href="http://82.116.203.239:8080/verify">Back to validation</a>
+            <a class="pure-button pure-button-primary" href="http://digitalcurrency.unic.ac.cy/free-introductory-mooc/academic-certificates-on-the-blockchain-new/">Back to main site</a>
+        </div>
+    </div>
+</body>
+</html>

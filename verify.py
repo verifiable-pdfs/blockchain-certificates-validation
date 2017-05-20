@@ -16,8 +16,7 @@ def uploaded_file():
       #if f exists and is file do check......
       result = check_output(["validate-certificates", "-t", "-p",
                              "554c616e6420", "-f", f.filename])
-      return result.decode("utf-8")
-      #return render_template('verification.html')
+      return render_template('verification.html', result_text = result.decode("utf-8"), filename = f.filename)
 
 if __name__ == '__main__':
    app.run(debug = False, host='0.0.0.0', port=8080)

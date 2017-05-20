@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blockchain Certificate Validation</title>
     <style>
-        div {
+        .center-div {
             position: absolute;
             left: 50%;
             top: 50%;
@@ -48,9 +48,9 @@
     </style>
 </head>
 <body>
-    <div>
-	    <img src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
-        <h3 class="top-space bottom-space">Please upload a pdf certificate for verification</h3>
+    <div class="center-div">
+	<img src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+        <h3 class="top-space bottom-space">Please upload an academic certificate for verification</h3>
         <form action="http://82.116.203.239:8080/verification" method="POST" enctype="multipart/form-data" class="pure-form">
             <fieldset>
                 <label for="file" class="pure-button button-secondary" id="fake-file">Select a PDF certificate file...</label>
