@@ -40,6 +40,9 @@
 	.button-error {
             background: rgb(202, 60, 60);
 	}
+        .top-space-half {
+            margin-top: 0.5cm;
+        }
         .top-space-2 {
             margin-top: 2cm;
         }
@@ -65,18 +68,33 @@
             font-size: 2em;
             vertical-align: middle;
         }
+        .large-font {
+            font-size: 125%;
+        }
+        .normal-font {
+            font-size: 100%;
+        }
     </style>
 </head>
 <body>
     <div class="center-div">
         <img class="bottom-space-2" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
         {% if " is valid!" in result_text %}
-        <div class="message-box message-box-success">
+        <div class="message-box message-box-success large-font">
             <i class="fa fa-check"></i>
             Certificate {{ filename }} is valid!
         </div>
+        <div class="message-box normal-font top-space-half">
+            <b>Issuer:</b> {{ issuer }}
+        </div>
+        <div class="message-box normal-font">
+            <b>Address:</b> {{ address }}
+        </div>
+        <div class="message-box normal-font">
+            <b>TxId:</b> {{ txid }}
+        </div>
         {% else %}
-        <div class="message-box message-box-error">
+        <div class="message-box message-box-error large-font">
             <i class="fa fa-times-circle"></i>
             Certificate {{ filename }} is NOT valid!
         </div>
