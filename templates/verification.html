@@ -61,7 +61,7 @@
             background-color: rgb(202, 60, 60)
         }
         .message-box i {
-            margin: 10px 12px;
+            margin: 5px 6px;
             font-size: 2em;
             vertical-align: middle;
         }
@@ -70,7 +70,7 @@
 <body>
     <div class="center-div">
         <img class="bottom-space-2" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
-        {% if "_not_" not in result_text %}
+        {% if " is valid!" in result_text %}
         <div class="message-box message-box-success">
             <i class="fa fa-check"></i>
             Certificate {{ filename }} is valid!
