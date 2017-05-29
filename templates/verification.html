@@ -1,105 +1,46 @@
 <html>
 <head>
+    <script src="https://use.fontawesome.com/8e42f0ed9b.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='unic.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blockchain Certificate Validation</title>
-    <style>
-        @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-        .center-div {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 40%;
-            height: 50%;
-            padding: 20px;
-            text-align: center;
-            <!-- box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); -->
-        }
-        .pure-form label{
-            margin: 0;
-        }
-        .button-error,
-        .button-success,
-        .button-warning,
-        .button-secondary {
-            color: white;
-            border-radius: 4px;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-
-        .button-secondary {
-            background: rgb(66, 184, 221);
-        }
-	.button-warning {
-            background: rgb(223, 117, 20);
-	}
-	.button-success {
-            background: rgb(28, 184, 65);
-	}
-	.button-error {
-            background: rgb(202, 60, 60);
-	}
-        .top-space-half {
-            margin-top: 0.5cm;
-        }
-        .top-space-2 {
-            margin-top: 2cm;
-        }
-        .bottom-space-2 {
-            margin-bottom: 2cm;
-        }
-        .message-box {
-            margin: 10px 0px;
-            padding: 12px;
-            border-radius:.5em;
-            font-size: 125%;
-        }
-        .message-box-success {
-            color: white;
-            background-color: rgb(28, 184, 65)
-        }
-        .message-box-error {
-            color: white;
-            background-color: rgb(202, 60, 60)
-        }
-        .message-box i {
-            margin: 5px 6px;
-            font-size: 2em;
-            vertical-align: middle;
-        }
-        .large-font {
-            font-size: 125%;
-        }
-        .normal-font {
-            font-size: 100%;
-        }
-    </style>
 </head>
 <body>
-    <div class="center-div">
-        <img class="bottom-space-2" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+    <div class="pure-g simple-center-div top-space-2">
+        <div class="pure-u-1">
+        <img class="pure-img center-img bottom-space-2" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+        </div>
         {% if " is valid!" in result_text %}
-        <div class="message-box message-box-success large-font">
+        <div class="pure-u-1 message-box message-box-success large-font">
             <i class="fa fa-check"></i>
             Certificate {{ filename }} is valid!
         </div>
-        <div class="message-box normal-font top-space-half">
-            <b>Issuer:</b> {{ issuer }}
-        </div>
-        <div class="message-box normal-font">
-            <b>Address:</b> {{ address }}
-        </div>
-        <div class="message-box normal-font">
-            <b>TxId:</b> {{ txid }}
+        <div class="pure-u-1">
+        <table class="pure-table table-md top-space-half" >
+            <tbody>
+                <tr class="pure-table-odd">
+                    <td><b>Issuer</b></td>
+                    <td>{{ issuer }}</td>
+                </tr>
+                <tr>
+                    <td><b>Address</b></td>
+                    <td>{{ address }}</td>
+                </tr>
+                <tr class="pure-table-odd">
+                    <td><b>Transaction Id</b></td>
+                    <td>{{ txid }}</td>
+                </tr>
+            </tbody>
+        </table>
         </div>
         {% else %}
-        <div class="message-box message-box-error large-font">
+        <div class="pure-u-1 message-box message-box-error large-font">
             <i class="fa fa-times-circle"></i>
-            Certificate {{ filename }} is NOT valid!
+            Certificate {{ filename }} is not valid!
         </div>
         {% endif %}
-        <div class="top-space-2">
+        <div class="pure-u-1 top-space-2">
             <a class="pure-button button-secondary" href="http://82.116.203.239:8080/verify">Back to validation</a>
             <a class="pure-button pure-button-primary" href="http://digitalcurrency.unic.ac.cy/free-introductory-mooc/academic-certificates-on-the-blockchain-new/">Back to main site</a>
         </div>

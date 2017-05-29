@@ -1,68 +1,36 @@
 <html>
 <head>
+    <script src="https://use.fontawesome.com/8e42f0ed9b.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='unic.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blockchain Certificate Validation</title>
-    <style>
-        .center-div {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 40%;
-            height: 50%;
-            padding: 20px;
-            text-align: center;
-            <!-- box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); -->
-        }
-        .pure-form label{
-            margin: 0;
-        }
-        .button-error,
-        .button-success,
-        .button-warning,
-        .button-secondary {
-            color: white;
-            border-radius: 4px;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-
-        .button-secondary {
-            background: rgb(66, 184, 221);
-        }
-	.button-warning {
-            background: rgb(223, 117, 20);
-	}
-	.button-success {
-            background: rgb(28, 184, 65);
-	}
-	.button-error {
-            background: rgb(202, 60, 60);
-	}
-        .top-space {
-            margin-top: 2cm;
-        }
-        .bottom-space {
-            margin-bottom: 1cm;
-        }
-    </style>
 </head>
 <body>
-    <div class="center-div">
-	<img src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
-        <h3 class="top-space bottom-space">Please upload an academic certificate for verification</h3>
+    <div class="pure-g simple-center-div top-space-2">
+        <div class="pure-u-1">
+	    <img class="pure-img center-img" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+        </div>
+        <div class="pure-u-1">
+            <h3 class="top-space-2 bottom-space-1">Please upload an academic certificate for verification</h3>
+        </div>
+        <div class="pure-u-1">
         <form action="http://82.116.203.239:8080/verification" method="POST" enctype="multipart/form-data" class="pure-form">
             <fieldset>
                 <label for="file" class="pure-button button-secondary" id="fake-file">Select a PDF certificate file...</label>
                 <input type="file" name="file" id="file" style="display: none;" required />
                 <input type="submit" value="Verify" id="submit-form" class="pure-button pure-button-primary" disabled />
             </fieldset>
+            <i id="cog" aria-hidden="true" class="fa fa-cog fa-spin fa-2x fa-fw no-display"></i>
+            <span class="sr-only">Verifying...</span>
         </form>
+        </div>
     </div>
     <script>
         var input = document.getElementById('file'); 
         var fake = document.getElementById('fake-file'); 
 	var submit = document.getElementById('submit-form');
+        var cog = document.getElementById('cog');
         input.onchange = function () {
             if (this.value && this.value.split('.').pop() == 'pdf') {
                 fake.innerHTML = this.value.split('\\').pop();
@@ -73,6 +41,11 @@
                 fake.innerHTML = "Not a PDF. Please select a PDF certificate file...";
 		submit.setAttribute("disabled", "true");
 	    }
+        }
+        submit.onclick = function () {
+            cog.className = cog.className.replace(new RegExp('(?:^|\\s)'+ 'no-display' + '(?:\\s|$)'), ' ');
+            submit.submit();
+            submit.disabled = true;
         }
     </script>
 </body>

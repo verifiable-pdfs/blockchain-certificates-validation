@@ -1,0 +1,78 @@
+
+.simple-center-div {
+    text-align: center;
+    width: 40%;
+    margin: auto;
+}
+.center-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.pure-form label{
+    margin: 0;
+}
+.button-error,
+.button-success,
+.button-warning,
+.button-secondary {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.button-secondary {
+    background: rgb(66, 184, 221);
+}
+.button-warning {
+    background: rgb(223, 117, 20);
+}
+.button-success {
+    background: rgb(28, 184, 65);
+}
+.button-error {
+    background: rgb(202, 60, 60);
+}
+.bottom-space-1 {
+    margin-bottom: 1cm;
+}
+.bottom-space-2 {
+    margin-bottom: 2cm;
+}
+.top-space-2 {
+    margin-top: 2cm;
+}
+.top-space-half {
+    margin-top: 0.5cm;
+}
+
+.table-md {
+    width: 100%;
+}
+.message-box {
+    margin: 10px 0px;
+    padding: 12px;
+    border-radius:.5em;
+    font-size: 125%;
+}
+.message-box-success {
+    color: white;
+    background-color: rgb(28, 184, 65)
+}
+.message-box-error {
+    color: white;
+    background-color: rgb(202, 60, 60)
+}
+.message-box i {
+    margin: 5px 6px;
+    font-size: 2em;
+    vertical-align: middle;
+}
+.large-font {
+    font-size: 125%;
+}
+.normal-font {
+    font-size: 100%;
+}
+.no-display {
+    display: none;
+}
