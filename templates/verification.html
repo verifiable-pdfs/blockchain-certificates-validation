@@ -31,17 +31,46 @@
                     <td><b>Transaction Id</b></td>
                     <td>{{ txid }}</td>
                 </tr>
+		{% if metadata %}
+		  <tr>
+		      <td><b>Student Name</b></td>
+		      <td>{{ metadata['student_name'] }}</td>
+		  </tr>
+		  <tr class="pure-table-odd">
+		      <td><b>Degree</b></td>
+		      <td>{{ metadata['degree_title'] }}</td>
+		  </tr>
+		  <tr>
+		      <td><b>Grade</b></td>
+		      <td>{{ metadata['percentage_grade'] }}</td>
+		  </tr>
+		  <tr class="pure-table-odd">
+		      <td><b>Date of Issuance</b></td>
+		      <td>{{ metadata['date_of_issuance'] }}</td>
+		  </tr>
+		{% endif %}
             </tbody>
         </table>
         </div>
         {% else %}
-        <div class="pure-u-1 message-box message-box-error large-font">
-            <i class="fa fa-times-circle"></i>
-            Certificate {{ filename }} is not valid!
+        <div class="pure-u-1 message-box message-box-warning large-font">
+            <i class="fa fa-exclamation-triangle"></i>
+	    Certificate {{ filename }} does not validate.
+        </div>
+        <div class="pure-u-1">
+	    <table class="pure-table table-md top-space-half" >
+		<tbody>
+	            <tr>
+		        <td>
+	                    Please make sure it is the original PDF that was issued on the blockchain and not just a scanned copy of the certificate.
+		        </td>
+	            </tr>
+		</tbody>
+	    </table>
         </div>
         {% endif %}
         <div class="pure-u-1 top-space-2">
-            <a class="pure-button button-secondary" href="http://82.116.203.239:8080/verify">Back to validation</a>
+            <a class="pure-button button-secondary" href="http://127.0.0.1:8080/verify">Back to validation</a>
             <a class="pure-button pure-button-primary" href="https://digitalcurrency.unic.ac.cy/free-introductory-mooc/self-verifiable-certificates-on-the-bitcoin-blockchain/">Back to main site</a>
         </div>
     </div>
