@@ -40,11 +40,14 @@ def uploaded_file():
             txid = chainpoint_proof['anchors'][0]['sourceId']
 
             # testnet "ULand " prefix
-            result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
+            #result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
             #print(result.decode("utf-8"))
 
+            # testnet "UNicDC " prefix
+            #result = check_output(["validate-certificates", "-t", "-p", "554e6963444320", "-f", temp_filename])
+
             # mainnet "UNicDC " prefix
-            #result = check_output(["validate-certificates", "-p", "554e6963444320", "-f", temp_filename])
+            result = check_output(["validate-certificates", "-p", "554e6963444320", "-f", temp_filename])
 
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
             return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid)
