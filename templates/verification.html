@@ -20,18 +20,32 @@
         <table class="pure-table table-md top-space-half" >
             <tbody>
                 <tr class="pure-table-odd">
-                    <td><b>Issuer</b></td>
-                    <td>{{ issuer }}</td>
-                </tr>
-                <tr>
-                    <td><b>Address</b></td>
-                    <td>{{ address }}</td>
-                </tr>
-                <tr class="pure-table-odd">
                     <td><b>Transaction Id</b></td>
                     <td>{{ txid }}</td>
                 </tr>
+		{% if address %}
+                  <tr>
+                      <td><b>Issuer</b></td>
+                      <td>{{ issuer }}</td>
+                  </tr>
+                  <tr class="pure-table-odd">
+                      <td><b>Address</b></td>
+                      <td>{{ address }}</td>
+                  </tr>
+		{% endif %}
 		{% if metadata %}
+
+		  {% if metadata['issuer_address'] %}
+                    <tr>
+                       <td><b>Issuer</b></td>
+                       <td>{{ metadata['issuer'] }}</td>
+                    </tr>
+                    <tr class="pure-table-odd">
+                       <td><b>Address</b></td>
+                       <td>{{ metadata['issuer_address'] }}</td>
+                    </tr>
+	          {% endif %}
+
 		  <tr>
 		      <td><b>Student Name</b></td>
 		      <td>{{ metadata['student_name'] }}</td>

@@ -37,7 +37,10 @@ def uploaded_file():
 
             issuer = cleanPdfString(pdf.Info.issuer)
             address = cleanPdfString(pdf.Info.issuer_address)
-            metadata_string = cleanPdfString(pdf.Info.metadata_object)
+            # get metadata string and convert literal unicode escape
+            # sequences (only way to store unicode in PDF metadata)
+            # to unicode string
+            metadata_string = cleanPdfString(pdf.Info.metadata_object).encode('ascii').decode('unicode_escape')
             chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
 
             if(metadata_string):
@@ -54,10 +57,10 @@ def uploaded_file():
             #print(result.decode("utf-8"))
 
             # testnet "UNicDC " prefix
-            #result = check_output(["validate-certificates", "-t", "-p", "554e6963444320", "-f", temp_filename])
+            result = check_output(["validate-certificates", "-t", "-p", "554e6963444320", "-f", temp_filename])
 
             # mainnet "UNicDC " prefix
-            result = check_output(["validate-certificates", "-p", "554e6963444320", "-f", temp_filename])
+            #result = check_output(["validate-certificates", "-p", "554e6963444320", "-f", temp_filename])
 
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
             return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata)

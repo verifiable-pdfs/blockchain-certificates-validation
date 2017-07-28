@@ -32,7 +32,7 @@
 	var submit = document.getElementById('submit-form');
         var cog = document.getElementById('cog');
         input.onchange = function () {
-            if (this.value && this.value.split('.').pop() == 'pdf') {
+            if (this.value && this.value.split('.').pop().toLowerCase() == 'pdf') {
                 fake.innerHTML = this.value.split('\\').pop();
 		fake.setAttribute("class", "pure-button button-secondary button-success");
 		submit.removeAttribute("disabled");
