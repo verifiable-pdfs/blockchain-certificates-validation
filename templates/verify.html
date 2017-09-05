@@ -3,50 +3,115 @@
     <script src="https://use.fontawesome.com/8e42f0ed9b.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='unic.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blockchain Certificate Validation</title>
 </head>
 <body>
-    <div class="pure-g simple-center-div top-space-2">
-        <div class="pure-u-1">
-	    <img class="pure-img center-img" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+    <div class="pure-g large-font">
+        <div class="pure-u-1 header">
+            <div class="simple-center-div top-space-1">
+                <div class="pure-u-1">
+                    <img class="pure-img center-img" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo" />
+                </div>
+                <div class="pure-u-1">
+                    <h4 class="sub-header">CERTIFICATE VERIFICATION</h4>
+                </div>
+            </div>
         </div>
-        <div class="pure-u-1">
-            <h3 class="top-space-2 bottom-space-1">Please upload an academic certificate for verification</h3>
+        <div class="simple-center-div with-border top-space-2 bottom-space-2">
+            <div class="pure-u-1 main-text">
+                <p>
+                    The University of Nicosia, a leader in blockchain technology education, started issuing certificates into Bitcoin’s blockchain from 2014 to award its “Introduction to Digital Currencies” MOOC graduates. As of Fall 2017, the University expanded the blockchain publication to all diplomas issued by the University. All graduates, in addition to getting a normal physical diploma, also get a PDF copy of the diploma with special metadata that anchors that certificate into the blockchain.
+                </p>
+                <p>
+                    Please note that the actual PDF of the certificate itself is not published to the blockchain, but rather a fingerprint of the PDF, which is enough to validate that the exact document was indeed published by the University of Nicosia and timestamped by Bitcoin’s blockchain.
+                </p>
+            </div>
         </div>
-        <div class="pure-u-1">
-        <form action="http://127.0.0.1:8080/verification" method="POST" enctype="multipart/form-data" class="pure-form">
-            <fieldset>
-                <label for="file" class="pure-button button-secondary" id="fake-file">Select a PDF certificate file...</label>
-                <input type="file" name="file" id="file" style="display: none;" required />
-                <input type="submit" value="Verify" id="submit-form" class="pure-button pure-button-primary" disabled />
-            </fieldset>
-            <i id="cog" aria-hidden="true" class="fa fa-cog fa-spin fa-2x fa-fw no-display"></i>
-            <span class="sr-only">Verifying...</span>
-        </form>
+        <div class="pure-u-1 upload-section bottom-space-2">
+            <div class="simple-center-div">
+                <div class="pure-u-1">
+                    <h3>Please upload an academic certificate for verification</h3>
+                </div>
+                <div class="pure-u-1">
+                    <form action="http://127.0.0.1:8080/verification" method="POST" enctype="multipart/form-data" class="pure-form">
+                        <fieldset>
+                            <label for="file" class="pure-button button-primary medium-font" id="fake-file">Select a PDF certificate file...</label>
+                            <input type="file" name="file" id="file" style="display: none;" required />
+                            <br>
+                            <button type="submit" id="submit-form" class="pure-button button-primary no-display disabled">Verify</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="simple-center-div bottom-space-1">
+            <div class="pure-u-1 main-text">
+                <div class="accordion">
+                    <h4 class="accordion-title"><span class="accordion-expander"><i class="fa fa-caret-right"></i></span> How to verify a certificate</h4>
+                    <div class="accordion-content no-display">
+			    <p>To verify the authenticity of a certificate you can use the validation tool above to upload that PDF by clicking <span class="accordion-bold">"Select a PDF certificate file..."</span> and then selecting the certificate PDF on your computer.</p>
+			<p>Once the PDF file is selected then the <span class="accordion-bold">“Verify”</span> button will appear and clicking it will attempt to verify the certificate.</p>
+                    </div>
+                </div>
+                <div class="accordion">
+                    <h4 class="accordion-title"><span class="accordion-expander"><i class="fa fa-caret-right"></i></span>  If a certificate is successfully validated</h4>
+                    <div class="accordion-content no-display">
+                        <p>If the certificate verification is successful, the tool will display information regarding the graduate, the course and the issuer (University of Nicosia).</p>
+                        <p class="last-accordion-p"><img class="pure-img center-img" src="{{ url_for('static', filename='screen2.png') }}" alt="Screen2" /></p>
+                    </div>
+                </div>
+                <div class="accordion">
+                    <h4 class="accordion-title"><span class="accordion-expander"><i class="fa fa-caret-right"></i></span>  If certificate validation is unsuccessful</h4>
+                    <div class="accordion-content no-display">
+                        <p>If the PDF file does not successfully validate then a warning message will appear. A certificate will successfully validate only if it has the appropriate metadata that anchor it on the Bitcoin’s blockchain. If not, for example, if the physical copy was scanned and provided to the validator, it will fail to validate since it will be missing the necessary metadata to match it to the blockchain entry.</p>
+                        <p><img class="pure-img center-img" src="{{ url_for('static', filename='screen3.png') }}" alt="Screen3" /></p>
+                        <p>Please note that an unsuccessful file validation does not necessarily mean that the document is not authentic. It may be the case that the specific PDF is not the original one that was generated by the University of Nicosia and published on the blockchain.</p>
+                        <p class="last-accordion-p">In this case, we suggest contacting the University of Nicosia Registrar Ms Maria Panayiotou (panayiotou.m@unic.ac.cy) for further information regarding that certificate.</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script>
-        var input = document.getElementById('file'); 
-        var fake = document.getElementById('fake-file'); 
-	var submit = document.getElementById('submit-form');
-        var cog = document.getElementById('cog');
+        var input = document.getElementById('file');
+        var fake = document.getElementById('fake-file');
+        var submit = document.getElementById('submit-form');
         input.onchange = function () {
             if (this.value && this.value.split('.').pop().toLowerCase() == 'pdf') {
-                fake.innerHTML = this.value.split('\\').pop();
-		fake.setAttribute("class", "pure-button button-secondary button-success");
-		submit.removeAttribute("disabled");
-	    } else {
-		fake.setAttribute("class", "pure-button button-secondary button-warning");
+                fake.innerHTML = this.value.split('\\').pop() + ' (change...)';
+                fake.setAttribute("class", "pdf-selected-label");
+                $('#submit-form').removeClass('no-display');
+                submit.removeAttribute("disabled");
+            } else {
+                fake.setAttribute("class", "pure-button button-secondary button-warning");
                 fake.innerHTML = "Not a PDF. Please select a PDF certificate file...";
-		submit.setAttribute("disabled", "true");
-	    }
+                submit.setAttribute("disabled", "true");
+                $('#submit-form').addClass('no-display');
+            }
         }
         submit.onclick = function () {
-            cog.className = cog.className.replace(new RegExp('(?:^|\\s)'+ 'no-display' + '(?:\\s|$)'), ' ');
+            $('#submit-form').html('<i id="cog" aria-hidden="true" class="fa fa-cog fa-spin fa-fw"></i><span class="sr-only">Verifying...</span>').addClass('disabled');
+            fake.innerHTML = 'Uploading: ' + fake.innerHTML.replace(' (change...)', '');
+            fake.setAttribute("for", "");
+            // $('#fake-file').addClass('no-display');
             submit.submit();
-            submit.disabled = true;
         }
+
+        $('.accordion-title').click(function(e) {
+            var $content = $(this).siblings('.accordion-content')
+            var $expander = $(this).find('.accordion-expander')
+            if ($content.hasClass('no-display')) {
+                $content.removeClass('no-display');
+                $expander.html('<i class="fa fa-caret-down"></i>');
+            } else {
+                $content.addClass('no-display');
+                $expander.html('<i class="fa fa-caret-right"></i>');
+            }
+        });
     </script>
 </body>
 </html>

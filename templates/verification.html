@@ -3,102 +3,102 @@
     <script src="https://use.fontawesome.com/8e42f0ed9b.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='unic.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blockchain Certificate Validation</title>
 </head>
 <body>
-    <div class="pure-g simple-center-div top-space-2">
-        <div class="pure-u-1">
-        <img class="pure-img center-img bottom-space-2" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo">
+    <div class="pure-g">
+        <div class="pure-u-1 header">
+            <div class="simple-center-div top-space-half">
+                <div class="pure-u-1">
+                    <img class="pure-img center-img" src="{{ url_for('static', filename='UNIC-logo.png') }}" alt="UNic Logo" />
+                </div>
+                <div class="pure-u-1">
+                    <h4 class="sub-header">CERTIFICATE VERIFICATION</h4>
+                </div>
+            </div>
         </div>
-        {% if " is valid!" in result_text %}
-        <div class="pure-u-1 message-box message-box-success large-font">
-            <i class="fa fa-check"></i>
-            Certificate {{ filename }} is valid!
-        </div>
-        <div class="pure-u-1">
-        <table class="pure-table table-md top-space-half" >
-            <tbody>
-                <tr class="pure-table-odd">
-                    <td><b>Transaction Id</b></td>
-                    <td>{{ txid }}</td>
-                </tr>
-		{% if address %}
-                  <tr>
-                      <td><b>Issuer</b></td>
-                      <td>{{ issuer }}</td>
-                  </tr>
-                  <tr class="pure-table-odd">
-                      <td><b>Address</b></td>
-                      <td>{{ address }}</td>
-                  </tr>
-		{% endif %}
-		{% if metadata %}
-
-		  {% if metadata['issuer_address'] %}
-                    <tr>
-                       <td><b>Issuer</b></td>
-                       <td>{{ metadata['issuer'] }}</td>
-                    </tr>
-                    <tr class="pure-table-odd">
-                       <td><b>Address</b></td>
-                       <td>{{ metadata['issuer_address'] }}</td>
-                    </tr>
-	          {% endif %}
-
-		  <tr>
-		      <td><b>First Name</b></td>
-		      <td>{{ metadata['First Name'] }}</td>
-		  </tr>
-		  <tr class="pure-table-odd">
-		      <td><b>Fathers Name</b></td>
-		      <td>{{ metadata['Fathers Name'] }}</td>
-		  </tr>
-		  <tr>
-		      <td><b>Last Name</b></td>
-		      <td>{{ metadata['Last Name'] }}</td>
-		  </tr>
-		  <tr class="pure-table-odd">
-		      <td><b>Degree Type</b></td>
-		      <td>{{ metadata['Degree Type'] }}</td>
-		  </tr>
-		  <tr>
-		      <td><b>Program of Study</b></td>
-		      <td>{{ metadata['Program of Study'] }}</td>
-		  </tr>
-		  <tr class="pure-table-odd">
-		      <td><b>Date of Issue</b></td>
-		      <td>{{ metadata['Date of Issue'] }}</td>
-		  </tr>
-		{% endif %}
-            </tbody>
-        </table>
-        </div>
-        {% else %}
-        <div class="pure-u-1 message-box message-box-warning large-font">
-            <i class="fa fa-exclamation-triangle"></i>
-	    Certificate {{ filename }} does not validate.
-        </div>
-        <div class="pure-u-1">
-	    <table class="pure-table table-md top-space-half" >
-		<tbody>
-	            <tr>
-		        <td>
-	                    Please make sure it is the original PDF that was issued on the blockchain and not just a scanned copy of the certificate.
-		        </td>
-	            </tr>
-	            <tr>
-		        <td>
-	                    For manual verification of University of Nicosia degrees please contact Ms. Maria Panayiotou (panayiotou.m@unic.ac.cy).
-		        </td>
-	            </tr>
-		</tbody>
-	    </table>
-        </div>
-        {% endif %}
-        <div class="pure-u-1 top-space-2">
-            <a class="pure-button button-secondary" href="http://127.0.0.1:8080/verify">Back to validation</a>
-            <a class="pure-button pure-button-primary" href="https://digitalcurrency.unic.ac.cy/free-introductory-mooc/self-verifiable-certificates-on-the-bitcoin-blockchain/">Back to main site</a>
+        <div class="simple-center-div top-space-2">
+            {% if " is valid!" in result_text %}
+            <div class="pure-u-1 message-box message-box-success large-font">
+                <i class="fa fa-check"></i>
+                Certificate {{ filename }} is valid!
+            </div>
+            <div class="pure-u-1">
+                <table class="pure-table table-md top-space-1" >
+                    <tbody>
+                        <tr class="pure-table-odd">
+                            <td><b>Transaction Id</b></td>
+                            <td>{{ txid }}</td>
+                        </tr>
+                        {% if address %}
+                            <tr>
+                                <td><b>Issuer</b></td>
+                                <td>{{ issuer }}</td>
+                            </tr>
+                            <tr class="pure-table-odd">
+                                <td><b>Address</b></td>
+                                <td>{{ address }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if metadata %}
+                            {% if metadata['issuer_address'] %}
+                                <tr>
+                                    <td><b>Issuer</b></td>
+                                    <td>{{ metadata['issuer'] }}</td>
+                                </tr>
+                                <tr class="pure-table-odd">
+                                    <td><b>Address</b></td>
+                                    <td>{{ metadata['issuer_address'] }}</td>
+                                </tr>
+                            {% endif %}
+                                <tr>
+                                    <td><b>First Name</b></td>
+                                    <td>{{ metadata['First Name'] }}</td>
+                                </tr>
+                                <tr class="pure-table-odd">
+                                    <td><b>Fathers Name</b></td>
+                                    <td>{{ metadata['Fathers Name'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Last Name</b></td>
+                                    <td>{{ metadata['Last Name'] }}</td>
+                                </tr>
+                                <tr class="pure-table-odd">
+                                    <td><b>Degree Type</b></td>
+                                    <td>{{ metadata['Degree Type'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Program of Study</b></td>
+                                    <td>{{ metadata['Program of Study'] }}</td>
+                                </tr>
+                                <tr class="pure-table-odd">
+                                    <td><b>Date of Issue</b></td>
+                                    <td>{{ metadata['Date of Issue'] }}</td>
+                                </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="pure-u-1 message-box message-box-warning large-font">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Certificate {{ filename }} does not validate.
+                </div>
+                <div class="pure-u-1 top-space-1">
+                    <p>
+                        Please make sure it is the original PDF that was issued on the blockchain and not just a scanned copy of the certificate.
+                    </p>
+                    <p>
+                        For manual verification of University of Nicosia degrees please contact Registrar Ms. Maria Panayiotou (<a href="mailto:panayiotou.m@unic.ac.cy">panayiotou.m@unic.ac.cy</a>).
+                    </p>
+            </div>
+            {% endif %}
+            <div class="pure-u-1 top-space-2 large-font">
+                <a class="pure-button button-primary" href="http://127.0.0.1:8080/verify">Back to verification</a>
+                <a class="pure-button button-secondary" href="https://digitalcurrency.unic.ac.cy/free-introductory-mooc/self-verifiable-certificates-on-the-bitcoin-blockchain/">Back to main site</a>
+            </div>
         </div>
     </div>
 </body>
