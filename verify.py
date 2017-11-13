@@ -59,8 +59,8 @@ def uploaded_file():
             # testnet "UNicDC " prefix
             #result = check_output(["validate-certificates", "-t", "-p", "554e6963444320", "-f", temp_filename])
 
-            # mainnet "UNicDC " prefix
-            result = check_output(["validate-certificates", "-p", "554e6963444320", "-f", temp_filename])
+            # mainnet
+            result = check_output(["validate-certificates", "-f", temp_filename])
 
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
             return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata)
