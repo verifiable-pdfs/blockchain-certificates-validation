@@ -44,6 +44,7 @@ def uploaded_file():
             chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
 
             if(metadata_string):
+                #app.logger.info(metadata_string)
                 metadata = json.loads(metadata_string)
             else:
                 metadata = {}
@@ -57,12 +58,12 @@ def uploaded_file():
             #print(result.decode("utf-8"))
 
             # testnet "UNicDC " prefix
-            #result = check_output(["validate-certificates", "-t", "-p", "554e6963444320", "-f", temp_filename])
+            #result = check_output(["validate-certificates", "-t", "-f", temp_filename])
 
             # mainnet
             result = check_output(["validate-certificates", "-f", temp_filename])
-
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
+            #app.logger.info(metadata)
             return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata)
 
         except pdfrw.errors.PdfParseError:
@@ -79,11 +80,18 @@ def uploaded_file():
             if os.path.isfile(temp_filename):
                 os.remove(temp_filename)
 
-
+'''
+PDF metadata enclose strings with '(' and ')'. This method removes them so that
+it can be properly read as json.
+'''
 def cleanPdfString(pdfString):
     if pdfString != None:
         if(pdfString.startswith('(') and pdfString.endswith(')')):
-            return pdfString[1:-1]
+            clean_out_parenthesis = pdfString[1:-1]
+            # if any user defined metadata contain ( or ) it is escaped
+            # breaking the json conversion... so remove the escape char \
+            # when before a parenthesis -- TODO: replace with re!
+            return clean_out_parenthesis.replace('\\(','(').replace('\\)',')')
         else:
             return pdfString
     else:
