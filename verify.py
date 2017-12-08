@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import json
 import random
 import string
@@ -73,7 +74,9 @@ def uploaded_file():
 #            app.logger.info('No valid JSON chainpoint_proof metadata: ' + original_filename + " (" + temp_filename + ")")
 #            return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
         except:
-            app.logger.info('Unexpected error trying to validate ' + original_filename + " (" + temp_filename + ")")
+            app.logger.info('Unexpected error trying to validate ' +
+                            original_filename + " (" + temp_filename + 
+                            ") --- " + sys.exc_info()[0])
             return render_template('verification.html', result_text = "There was an unexpected error. Please try again later.", filename = original_filename)
         finally:
             # if file was written, delete
