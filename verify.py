@@ -50,6 +50,9 @@ def uploaded_file():
             else:
                 metadata = {}
 
+            # initialize txid
+            txid = ""
+
             if(chainpoint_proof_string):
                 chainpoint_proof = json.loads(chainpoint_proof_string)
                 txid = chainpoint_proof['anchors'][0]['sourceId']
