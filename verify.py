@@ -61,7 +61,7 @@ def uploaded_file():
             #result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
             #print(result.decode("utf-8"))
 
-            # testnet "UNicDC " prefix
+            # testnet
             #result = check_output(["validate-certificates", "-t", "-f", temp_filename])
 
             # mainnet
@@ -78,8 +78,8 @@ def uploaded_file():
 #            return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
         except:
             app.logger.info('Unexpected error trying to validate ' +
-                            original_filename + " (" + temp_filename + 
-                            ") --- " + sys.exc_info()[0])
+                            original_filename + " (" + temp_filename +
+                            ") --- " + str(sys.exc_info()) )
             return render_template('verification.html', result_text = "There was an unexpected error. Please try again later.", filename = original_filename)
         finally:
             # if file was written, delete
@@ -105,5 +105,5 @@ def cleanPdfString(pdfString):
 
 
 if __name__ == '__main__':
-    app.run(debug = False, host='0.0.0.0', port=8080)
+    app.run(debug = False, host='0.0.0.0', port=18080)
 

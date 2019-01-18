@@ -1,8 +1,6 @@
 Simple webapp to validate blockchain certificates issued to the blockchain. Uses blockchain-certificates code to validate.
 
-FOR PRODUCTION make sure that:
-- verify.py checks on the appropriate network (mainnet, testnet) 
-  and 82.116.203.239:18080 for testnet
+- verify.py checks on the mainnet by default (comment/uncomment appropriate code for testnet)
 
 
 COMPATIBILITY
