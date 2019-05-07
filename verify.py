@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import configargparse
 import random
 import string
 import logging
@@ -12,16 +13,40 @@ from werkzeug import secure_filename
 from subprocess import check_output
 
 app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
 handler = RotatingFileHandler('verify.log', maxBytes=100000, backupCount=1)
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
+'''
+Loads and returns the configuration options (either from --config or from
+specifying the specific options.
+Warning: Using `flask run` for running a development server does not allow 
+passing custom command line options to the underlying app 
+'''
+def load_config():
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    default_config = os.path.join(base_dir, 'config.ini')
+    p = configargparse.getArgumentParser(default_config_files=[default_config])
+    p.add('-c', '--config', required=False, is_config_file=True, help='config file path')
+    p.add_argument('-t', '--testnet', action='store_true', help='specify if testnet or mainnet will be used')
+    p.add_argument('--logo_text', type=str, help='text to appear under the logo')
+    p.add_argument('--upload_label_text', type=str, help='text to appear above the upload PDF button')
+    p.add_argument('--issuer_name', type=str, help='name of the organisation or person that issued the certificate')
+    p.add_argument('--contact_name', type=str, help='name to contact for manual verification')
+    p.add_argument('--contact_email', type=str, help='email to contact for manual verification')
+    p.add_argument('--general_text', type=str, help='text to appear at the top of the upload PDF page')
+    args, _ = p.parse_known_args()
+    return args
+
+# vars() casts the Namespace object returned by configargparse
+# to a dict for easier handling in the template
+app.custom_config = vars(load_config())
+
 @app.route('/verify')
 def upload_file():
-    return render_template('verify.html')
+    return render_template('verify.html', **app.custom_config)
 
 @app.route('/verification', methods = ['GET', 'POST'])
 def uploaded_file():
@@ -45,7 +70,7 @@ def uploaded_file():
             chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
 
             if(metadata_string):
-                #app.logger.info(metadata_string)
+                # app.logger.info(metadata_string)
                 metadata = json.loads(metadata_string)
             else:
                 metadata = {}
@@ -58,29 +83,30 @@ def uploaded_file():
                 txid = chainpoint_proof['anchors'][0]['sourceId']
 
             # testnet "ULand " prefix
-            #result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
-            #print(result.decode("utf-8"))
+            # result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
+            # print(result.decode("utf-8"))
 
-            # testnet
-            #result = check_output(["validate-certificates", "-t", "-f", temp_filename])
-
-            # mainnet
-            result = check_output(["validate-certificates", "-f", temp_filename])
+            if app.custom_config.get('testnet'):
+                # testnet
+                result = check_output(["validate-certificates", "-t", "-f", temp_filename])
+            else:
+                # mainnet
+                result = check_output(["validate-certificates", "-f", temp_filename])
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
-            #app.logger.info(metadata)
-            return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata)
+            # app.logger.info(metadata)
+            return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata, **app.custom_config)
 
         except pdfrw.errors.PdfParseError:
             app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
-            return render_template('verification.html', result_text = "Not a pdf file.", filename = original_filename)
-#        except json.decoder.JSONDecodeError:
-#            app.logger.info('No valid JSON chainpoint_proof metadata: ' + original_filename + " (" + temp_filename + ")")
-#            return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
+            return render_template('verification.html', result_text = "Not a pdf file.", filename = original_filename, **app.custom_config)
+    #    except json.decoder.JSONDecodeError:
+    #        app.logger.info('No valid JSON chainpoint_proof metadata: ' + original_filename + " (" + temp_filename + ")")
+    #        return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
         except:
             app.logger.info('Unexpected error trying to validate ' +
                             original_filename + " (" + temp_filename +
                             ") --- " + str(sys.exc_info()) )
-            return render_template('verification.html', result_text = "There was an unexpected error. Please try again later.", filename = original_filename)
+            return render_template('verification.html', result_text = "There was an unexpected error. Please try again later.", filename = original_filename, **app.custom_config)
         finally:
             # if file was written, delete
             if os.path.isfile(temp_filename):
