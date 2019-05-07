@@ -2,10 +2,6 @@
     font-family: 'Roboto', sans-serif;
     box-sizing: border-box;
 }
-.header{
-    background-color: #eee;
-    border-bottom: 1px solid #888;
-}
 .pure-img{
     max-width: 100%;
 }
@@ -57,21 +53,6 @@
     color: white;
     border-radius: 4px;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-}
-.button-primary{
-    background-color: #2f7ebb
-}
-.button-secondary {
-    background: rgb(66, 184, 221);
-}
-.button-warning {
-    background: rgb(223, 117, 20);
-}
-.button-success {
-    background: rgb(28, 184, 65);
-}
-.button-error {
-    background: rgb(202, 60, 60);
 }
 #submit-form{
     margin-top: 1rem;
@@ -148,18 +129,6 @@
     padding: 12px;
     font-size: 125%;
 }
-.message-box-success {
-    color: white;
-    background-color: rgb(28, 184, 65)
-}
-.message-box-error {
-    color: white;
-    background-color: rgb(202, 60, 60)
-}
-.message-box-warning {
-    color: white;
-    background-color: rgb(223, 117, 20)
-}
 .message-box i {
     margin: 5px 6px;
     font-size: 2em;
@@ -173,4 +142,50 @@
 }
 .no-display {
     display: none;
+}
+.testnet-warning{
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100px;
+    text-align: center;
+    letter-spacing: 0;
+    background-color: rgb(255, 153, 0);
+    color: #fff;
+}
+
+
+/* colors */
+.header{
+    background-color: #eee;
+    border-bottom: 1px solid #888;
+}
+
+.button-primary{
+    background-color: #2f7ebb
+}
+.button-secondary {
+    background: rgb(66, 184, 221);
+}
+.button-warning {
+    background: rgb(223, 117, 20);
+}
+.button-success {
+    background: rgb(28, 184, 65);
+}
+.button-error {
+    background: rgb(202, 60, 60);
+}
+
+.message-box-success {
+    color: white;
+    background-color: rgb(28, 184, 65)
+}
+.message-box-error {
+    color: white;
+    background-color: rgb(202, 60, 60)
+}
+.message-box-warning {
+    color: white;
+    background-color: rgb(223, 117, 20)
 }

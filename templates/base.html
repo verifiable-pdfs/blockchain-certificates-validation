@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script src="https://use.fontawesome.com/8e42f0ed9b.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blockchain Certificate Validation</title>
+</head>
+<body>
+    <div class="pure-g large-font">
+        <div class="pure-u-1 header">
+            <div class="simple-center-div top-space-1">
+                <div class="pure-u-1">
+                    <img class="pure-img center-img" src="{{ url_for('static', filename='logo.png') }}" alt="UNic Logo" />
+                </div>
+                <div class="pure-u-1">
+                    <h4 class="sub-header">{{ logo_text }}</h4>
+                </div>
+            </div>
+        </div>
+        {% if testnet %}
+            <div class="testnet-warning">Testnet</div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+{% block scripts %}{% endblock %}
+</body>
+</html>
