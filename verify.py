@@ -37,6 +37,7 @@ def load_config():
     p.add_argument('--contact_name', type=str, help='name to contact for manual verification')
     p.add_argument('--contact_email', type=str, help='email to contact for manual verification')
     p.add_argument('--general_text', type=str, help='text to appear at the top of the upload PDF page')
+    p.add_argument('--main_site_url', type=str, help='the URL of the website for the "Back to main website" link')
     args, _ = p.parse_known_args()
     return args
 
