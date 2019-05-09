@@ -9,6 +9,13 @@
 </head>
 <body>
     <div class="pure-g large-font">
+        <div class="pure-u-1 header warning-header no-display">
+            <div class="simple-center-div top-space-1 bottom-space-1">
+                <div class="pure-u-1">
+                    <i class="fa fa-exclamation-circle"></i> Please note that you might be running an older version of the validator.
+                </div>
+            </div>
+        </div>
         <div class="pure-u-1 header">
             <div class="simple-center-div top-space-1">
                 <div class="pure-u-1">
@@ -24,6 +31,18 @@
         {% endif %}
         {% block content %}{% endblock %}
     </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='compare-versions.js') }}"></script>
+    <script>
+        var installed_version = '{{ installed_version }}';
+        $.get('https://pypi.org/pypi/blockchain-certificates/json', function(data) {
+            var pypi_version = data.info ? data.info.version : '0';
+            if (compareVersions(pypi_version, installed_version) > 0) {
+                $('.warning-header').removeClass('no-display');
+            }
+        })
+    </script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

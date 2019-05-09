@@ -7,6 +7,7 @@ import random
 import string
 import logging
 import pdfrw
+from blockchain_certificates import __version__ as corelib_version
 from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template, request
 from werkzeug import secure_filename
@@ -50,6 +51,8 @@ def load_config():
 # vars() casts the Namespace object returned by configargparse
 # to a dict for easier handling in the template
 app.custom_config = vars(load_config())
+app.custom_config['installed_version'] = corelib_version
+print('Using v%s of the blockchain-certificates library' % (corelib_version,))
 
 @app.route('/verify')
 def upload_file():

@@ -160,6 +160,10 @@
     background-color: #eee;
     border-bottom: 1px solid #888;
 }
+.warning-header{
+    background-color: rgb(209, 122, 122);
+    color: #fff;
+}
 
 .button-primary{
     background-color: #2f7ebb
