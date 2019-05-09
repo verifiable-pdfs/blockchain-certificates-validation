@@ -27,7 +27,13 @@ passing custom command line options to the underlying app
 '''
 def load_config():
     base_dir = os.path.abspath(os.path.dirname(__file__))
-    default_config = os.path.join(base_dir, 'config.ini')
+
+    # default config is the user customized one -- defaults to sample config in
+    # root directory
+    default_config = os.path.join(base_dir, 'customize', 'config.ini')
+    if not os.path.isfile(default_config):
+        default_config = os.path.join(base_dir, 'config.ini')
+
     p = configargparse.getArgumentParser(default_config_files=[default_config])
     p.add('-c', '--config', required=False, is_config_file=True, help='config file path')
     p.add_argument('-t', '--testnet', action='store_true', help='specify if testnet or mainnet will be used')
