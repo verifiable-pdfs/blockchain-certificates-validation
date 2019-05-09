@@ -79,7 +79,9 @@
     {% endif %}
     <div class="pure-u-1 top-space-2 large-font">
         <a class="pure-button button-primary" href="/verify">Back to verification</a>
-        <a class="pure-button button-secondary" href="https://digitalcurrency.unic.ac.cy/free-introductory-mooc/self-verifiable-certificates-on-the-bitcoin-blockchain/">Back to main site</a>
+        {% if main_site_url %}
+            <a class="pure-button button-secondary" href="{{ main_site_url }}">Back to main site</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
