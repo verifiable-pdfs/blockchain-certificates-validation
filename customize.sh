@@ -12,10 +12,6 @@ fi
 
 echo "Copying files from customize/ to their relevant locations..."
 
-if [ -f $DIR/customize/config.ini ]; then
-    cp $DIR/customize/config.ini $DIR/
-    echo "Copied config.ini..."
-fi
 if [ -f $DIR/customize/logo.png ]; then
     cp $DIR/customize/logo.png $DIR/static/logo.png
     echo "Copied logo.png..."
