@@ -12,7 +12,7 @@
         <div class="pure-u-1 header warning-header no-display">
             <div class="simple-center-div top-space-1 bottom-space-1">
                 <div class="pure-u-1">
-                    <i class="fa fa-exclamation-circle"></i> Please note that you might be running an older version of the validator.
+                    <i class="fa fa-exclamation-circle"></i> <span id="warning-text">Please note that you might be running an older version of the validator.</span>
                 </div>
             </div>
         </div>
@@ -36,12 +36,22 @@
     <script src="{{ url_for('static', filename='compare-versions.js') }}"></script>
     <script>
         var installed_version = '{{ installed_version }}';
-        $.get('https://pypi.org/pypi/blockchain-certificates/json', function(data) {
-            var pypi_version = data.info ? data.info.version : '0';
-            if (compareVersions(pypi_version, installed_version) > 0) {
+
+        function checkVersion() {
+            $.get('https://pypi.org/pypi/blockchain-certificates/json', function (data) {
+                var pypi_version = data.info ? data.info.version : '0';
+                if (compareVersions(pypi_version, installed_version) > 0) {
+                    $('#warning-text').html('You are running v.' + installed_version + ' of the validator which is not up-to-date. Please upgrade to v.' + pypi_version);
+                    $('.warning-header').removeClass('no-display');
+                }
+            }).fail(function () {
+                $('#warning-text').html('Please note that you might be running an older version of the validator.');
                 $('.warning-header').removeClass('no-display');
-            }
-        })
+            });
+        }
+
+        checkVersion();
+        setInterval(checkVersion, 5*60*1000);
     </script>
 {% block scripts %}{% endblock %}
 </body>
