@@ -8,10 +8,12 @@ import string
 import logging
 import pdfrw
 from blockchain_certificates import __version__ as corelib_version
+from blockchain_certificates.validate_certificates import validate_certificates
 from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template, request
+from argparse import Namespace
 from werkzeug import secure_filename
-from subprocess import check_output
+from datetime import datetime
 
 app = Flask(__name__)
 handler = RotatingFileHandler('verify.log', maxBytes=100000, backupCount=1)
@@ -23,8 +25,8 @@ app.logger.addHandler(handler)
 '''
 Loads and returns the configuration options (either from --config or from
 specifying the specific options.
-Warning: Using `flask run` for running a development server does not allow 
-passing custom command line options to the underlying app 
+Warning: Using `flask run` for running a development server does not allow
+passing custom command line options to the underlying app
 '''
 def load_config():
     base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -96,15 +98,22 @@ def uploaded_file():
             # result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
             # print(result.decode("utf-8"))
 
-            if app.custom_config.get('testnet'):
-                # testnet
-                result = check_output(["validate-certificates", "-t", "-f", temp_filename])
-            else:
-                # mainnet
-                result = check_output(["validate-certificates", "-f", temp_filename])
+            conf = Namespace(
+                testnet = bool(app.custom_config.get('testnet')),
+                f = [temp_filename], # validate_certificates as a lib requires a list of filenames
+                issuer_identifier = None # needs a value
+            )
+            result = validate_certificates(conf)['results'][0]
+            if result['reason'] is not None:
+                if ('valid until: ' in result['reason']) or ('expired at:' in result['reason']):
+                    timestamp = int(result['reason'].split(':')[1].strip())
+                    result['expiry_date'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                elif result['reason'] == 'cert hash was revoked':
+                    result['revoked'] = True
+
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
-            # app.logger.info(metadata)
-            return render_template('verification.html', result_text = result.decode("utf-8"), filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata, **app.custom_config)
+
+            return render_template('verification.html', result = result, filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata, **app.custom_config)
 
         except pdfrw.errors.PdfParseError:
             app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")

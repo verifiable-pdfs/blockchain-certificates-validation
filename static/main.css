@@ -134,6 +134,11 @@
     font-size: 2em;
     vertical-align: middle;
 }
+.message-box p {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+}
+
 .large-font {
     font-size: 125%;
 }
@@ -143,6 +148,9 @@
 .no-display {
     display: none;
 }
+
+
+
 .testnet-warning{
     position: fixed;
     top: 0;
