@@ -1,10 +1,10 @@
-## Blockchain certificates validation 
+## Blockchain certificates validation
 Simple webapp to validate blockchain certificates issued to the blockchain. Uses [blockchain-certificates](https://github.com/UniversityOfNicosia/blockchain-certificates) code to validate.
 
 
 ### Installation
 This project requires python3. Clone this repository and inside the project directory:
-* Create a python virtual environment with `python3 -m venv venv` 
+* Create a python virtual environment with `python3 -m venv venv`
 * Activate the virtual environment: `. venv/bin/activate`
 * Install the requirements: `pip install -r requirements.txt`
 * To start a development server on port 18080: `python verify.py`. To start a production server on port 8080: `./start_gunicorn.sh`
@@ -22,9 +22,9 @@ If you pull an updated version of the webapp (e.g. with `git pull`), you need to
 
 ### Updating
 When a new version of the underlying libraries is available, there will be a warning displayed at the top of every page of the webapp. Follow the procedure below to update to the latest version.
-> cd blockchain-certificates-validation  
-> git pull  
-> . venv/bin/activate  
+> cd blockchain-certificates-validation
+> git pull
+> . venv/bin/activate
 > pip install --upgrade blockchain-certificates
 
 You must rerun the `customize.sh` script in order to copy your custom files to the relevant locations.
@@ -47,18 +47,3 @@ contact_email | email to contact for manual verification. *Example:* `foo@exampl
 general_text | text to appear at the top of the upload PDF page (accepts HTML). *Example:* `<p>Sample text 1</p><p>Sample text 2</p>`
 
 To override the logo that appears at the top of the page, overwrite the `static/logo.png` file with your own logo. You may also customize colors and other styles by editing `static/main.css`.
-
-
-### Compatibility
-- Supports all UNic published certificates except those with index file
-  . blockchain-certificates <= v0.9
-  . this is a TODO
-- validates self-contained certificates with old pdf metadata structure
-  . blockchain-certificates v0.9.0
-  . expects pdf metadata with keys: issuer, issuer_address and chainpoint_proof
-- validates self-contained certificates with new pdf metadata structure
-  . blockchain-certificates v0.10.0
-  . expects pdf metadata with keys: metadata_object and chainpoint_proof
-  . metadata_object is JSON that requires keys: issuer and issuer_address
-- validates self-contained certificates with CRED meta-protocol support
-  . blockchain-certificates v1.0.0
