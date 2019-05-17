@@ -2,6 +2,19 @@
 
 {% block content %}
 <div class="simple-center-div top-space-2">
+    {% if error %}
+    <div class="pure-u-1 message-box message-box-error">
+        <i class="fa fa-exclamation-triangle"></i>
+        {{ error }}
+        {% if filename %}<p>Filename: <strong>{{ filename }}</strong></p>{% endif %}
+    </div>
+    <div class="pure-u-1 top-space-1">
+        <p>
+            For manual verification of {{ issuer_name }} certificates please contact {{ contact_name }} (<a
+                href="mailto:{{ contact_email }}">{{ contact_email }}</a>).
+        </p>
+    </div>
+    {% else %}
     {% if result.status == 'valid' %}
     <div class="pure-u-1 message-box message-box-success large-font">
         <i class="fa fa-check"></i>
@@ -88,6 +101,7 @@
                 href="mailto:{{ contact_email }}">{{ contact_email }}</a>).
         </p>
     </div>
+    {% endif %}
     {% endif %}
     <div class="pure-u-1 top-space-2 large-font">
         <a class="pure-button button-primary" href="/verify">Back to verification</a>

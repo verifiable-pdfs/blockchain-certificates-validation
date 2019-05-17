@@ -104,7 +104,7 @@ def uploaded_file():
                 issuer_identifier = None # needs a value
             )
             result = validate_certificates(conf)['results'][0]
-            if result['reason'] is not None:
+            if 'reason' in result and result['reason'] is not None:
                 if ('valid until: ' in result['reason']) or ('expired at:' in result['reason']):
                     timestamp = int(result['reason'].split(':')[1].strip())
                     result['expiry_date'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
@@ -117,7 +117,7 @@ def uploaded_file():
 
         except pdfrw.errors.PdfParseError:
             app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
-            return render_template('verification.html', result_text = "Not a pdf file.", filename = original_filename, **app.custom_config)
+            return render_template('verification.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
     #    except json.decoder.JSONDecodeError:
     #        app.logger.info('No valid JSON chainpoint_proof metadata: ' + original_filename + " (" + temp_filename + ")")
     #        return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
@@ -125,7 +125,7 @@ def uploaded_file():
             app.logger.info('Unexpected error trying to validate ' +
                             original_filename + " (" + temp_filename +
                             ") --- " + str(sys.exc_info()) )
-            return render_template('verification.html', result_text = "There was an unexpected error. Please try again later.", filename = original_filename, **app.custom_config)
+            return render_template('verification.html', error = "There was an unexpected error. Please try again later.", filename = original_filename, **app.custom_config)
         finally:
             # if file was written, delete
             if os.path.isfile(temp_filename):
