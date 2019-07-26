@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="simple-center-div top-space-2">
     {% if error %}
     <div class="pure-u-1 message-box message-box-error">
@@ -16,6 +17,16 @@
     </div>
     {% else %}
     {% if result.status == 'valid' %}
+    {% if id_proofs == 0 %}
+    <div class="pure-u-1 message-box message-box-warning large-font">
+        <i class="fa fa-check"></i>
+        Certificate {{ filename }} is valid!
+        <p>However, the issuer has not provided any proof for his identity</p>
+        {% if result.expiry_date %}
+        <p>It will expire at: <strong>{{ result.expiry_date }} UTC</strong></p>
+        {% endif %}
+    </div>
+    {% else %}
     <div class="pure-u-1 message-box message-box-success large-font">
         <i class="fa fa-check"></i>
         Certificate {{ filename }} is valid!
@@ -23,62 +34,10 @@
         <p>It will expire at: <strong>{{ result.expiry_date }} UTC</strong></p>
         {% endif %}
     </div>
+    {% endif %}
     <div class="pure-u-1">
-        <table class="pure-table table-md top-space-1">
-            <tbody>
-                <tr class="pure-table-odd">
-                    <td><b>Transaction Id</b></td>
-                    <td>{{ txid }}</td>
-                </tr>
-                {% if address %}
-                <tr>
-                    <td><b>Issuer</b></td>
-                    <td>{{ issuer }}</td>
-                </tr>
-                <tr class="pure-table-odd">
-                    <td><b>Address</b></td>
-                    <td>{{ address }}</td>
-                </tr>
-                {% endif %}
-                {% if metadata %}
-                {% if metadata['issuer_address'] %}
-                <tr>
-                    <td><b>Issuer</b></td>
-                    <td>{{ metadata['issuer'] }}</td>
-                </tr>
-                <tr class="pure-table-odd">
-                    <td><b>Address</b></td>
-                    <td>{{ metadata['issuer_address'] }}</td>
-                </tr>
-                {% endif %}
-                <tr>
-                    <td><b>First Name</b></td>
-                    <td>{{ metadata['First Name'] }}</td>
-                </tr>
-                <tr class="pure-table-odd">
-                    <td><b>Fathers Name</b></td>
-                    <td>{{ metadata['Fathers Name'] }}</td>
-                </tr>
-                <tr>
-                    <td><b>Last Name</b></td>
-                    <td>{{ metadata['Last Name'] }}</td>
-                </tr>
-                <tr class="pure-table-odd">
-                    <td><b>Degree Type</b></td>
-                    <td>{{ metadata['Degree Type'] }}</td>
-                </tr>
-                <tr>
-                    <td><b>Program of Study</b></td>
-                    <td>{{ metadata['Program of Study'] }}</td>
-                </tr>
-                <tr class="pure-table-odd">
-                    <td><b>Date of Issue</b></td>
-                    <td>{{ metadata['Date of Issue'] }}</td>
-                </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
+        {% block metadata_content %}{% endblock %}
+     </div>
     {% else %}
     <div class="pure-u-1 message-box message-box-warning">
         <i class="fa fa-exclamation-triangle"></i>
@@ -86,10 +45,13 @@
         {% if result.expiry_date %}
         <p>It has expired at: <strong>{{ result.expiry_date }} UTC</strong></p>
         {% endif %}
-        {% if result.revoked %}
+        {% if result.revoked == 'certificate' %}
         <p>The certificate has been revoked.</strong></p>
+        {% elif result.revoked == 'address' %}
+        <p>The issuer has invalidated this issuing address.</strong></p>
+        {% elif result.revoked == 'batch' %}
+        <p>The issuance containing this certificate has been revoked.</strong></p>
         {% endif %}
-
     </div>
     <div class="pure-u-1 top-space-1">
         <p>

@@ -3,12 +3,13 @@
     <script src="https://use.fontawesome.com/8e42f0ed9b.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@4/themes/light-border.css" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blockchain Certificate Validation</title>
 </head>
 <body>
-    <div class="pure-g large-font">
+    <div class="pure-g">
         <div class="pure-u-1 header warning-header no-display">
             <div class="simple-center-div top-space-1 bottom-space-1">
                 <div class="pure-u-1">
@@ -34,6 +35,8 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='compare-versions.js') }}"></script>
+    <script src="https://unpkg.com/popper.js@1"></script>
+    <script src="https://unpkg.com/tippy.js@4"></script>
     <script>
         var installed_version = '{{ installed_version }}';
 
@@ -52,6 +55,14 @@
 
         checkVersion();
         setInterval(checkVersion, 5*60*1000);
+
+        // Set defaults for tooltips
+        tippy.setDefaults({
+            animation: 'fade',
+            arrow: true,
+            trigger: 'click',
+            theme: 'light-border',
+        });
     </script>
 {% block scripts %}{% endblock %}
 </body>

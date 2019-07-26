@@ -1,0 +1,70 @@
+{% extends 'verification_base.html' %}
+
+{% block metadata_content %}
+<table class="pure-table table-md top-space-1">
+    <tbody>
+        <tr class="pure-table-odd">
+            <td><b>Transaction Id</b></td>
+            <td>{{ txid }}</td>
+        </tr>
+        {% if address %}
+        <tr>
+            <td><b>Issuer</b></td>
+            <td>{{ issuer }}</td>
+        </tr>
+        <tr class="pure-table-odd">
+            <td><b>Address</b></td>
+            <td>{{ address }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata %}
+        {% if metadata['issuer_address'] %}
+        <tr>
+            <td><b>Issuer</b></td>
+            <td>{{ metadata['issuer'] }}</td>
+        </tr>
+        <tr class="pure-table-odd">
+            <td><b>Address</b></td>
+            <td>{{ metadata['issuer_address'] }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata['First Name'] %}
+        <tr>
+            <td><b>First Name</b></td>
+            <td>{{ metadata['First Name'] }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata['Fathers Name'] %}
+        <tr class="pure-table-odd">
+            <td><b>Fathers Name</b></td>
+            <td>{{ metadata['Fathers Name'] }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata['Last Name'] %}
+        <tr>
+            <td><b>Last Name</b></td>
+            <td>{{ metadata['Last Name'] }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata['Degree Type'] %}
+        <tr class="pure-table-odd">
+            <td><b>Degree Type</b></td>
+            <td>{{ metadata['Degree Type'] }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata['Program of Study'] %}
+        <tr>
+            <td><b>Program of Study</b></td>
+            <td>{{ metadata['Program of Study'] }}</td>
+        </tr>
+        {% endif %}
+        {% if metadata['Date of Issue'] %}
+        <tr class="pure-table-odd">
+            <td><b>Date of Issue</b></td>
+            <td>{{ metadata['Date of Issue'] }}</td>
+        </tr>
+        {% endif %}
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}
