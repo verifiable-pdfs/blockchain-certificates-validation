@@ -44,7 +44,7 @@
             $.get('https://pypi.org/pypi/blockchain-certificates/json', function (data) {
                 var pypi_version = data.info ? data.info.version : '0';
                 if (compareVersions(pypi_version, installed_version) > 0) {
-                    $('#warning-text').html('You are running v.' + installed_version + ' of the validator which is not up-to-date. Please upgrade to v.' + pypi_version);
+                    $('#warning-text').html('You are running v' + installed_version + ' of the validator which is not up-to-date. Please upgrade to v' + pypi_version);
                     $('.warning-header').removeClass('no-display');
                 }
             }).fail(function () {
