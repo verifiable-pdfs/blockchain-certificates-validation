@@ -1,0 +1,96 @@
+{% extends 'verification_base.html' %}
+
+{% block metadata_content %}
+<div class="top-space-1 panel">
+    <div class="panel-subcontainer text-center">
+        <div class="key-val-container">
+            <div class="td-label">
+                Issuer
+                <i class="fa fa-question-circle help-icon" data-tippy="This is the name that the issuer of the certificate has selected to be displayed"></i>
+            </div>
+            <div class="td-value-large">{{ issuer }}</div>
+        </div>
+    </div>
+    <div class="panel-subcontainer text-center row-border-top">
+        <div class="key-val-container">
+            <div class="td-label">
+                Issuer verification
+                <i class="fa fa-question-circle help-icon" data-tippy="Methods provided by the issuer to prove that issuer ID '{{ address }}' corresponds to issuer name '{{ issuer }}'"></i>
+            </div>
+            {% if result.verification %}
+            {% for key, value in result.verification.items() %}
+                {% if key == 'domain' %}
+                    <div>
+                        Domain: {{value.url}}&nbsp;
+                        {% if value.success %}
+                            <i class="fa fa-check-circle" style="color: green;"></i> <i class="fa fa-question-circle help-icon"
+                            data-tippy="The certificate issuer proved ownership of the domain displayed. Please verify that this domain actually represents {{ issuer }}"></i>
+                        {% else %}
+                            <i class="fa fa-times-circle" style="color: red;"></i> <i class="fa fa-question-circle help-icon"
+                                data-tippy="The certificate issuer provided the domain displayed here but could not prove ownership."></i>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% else %}
+                <div><i class="fa fa-exclamation-circle" style="color: red;"></i> The issuer hasn't provided any proofs about their identity.</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="panel-subcontainer text-center row-border-top">
+        <div id="technical-more" style="display: none;">
+            <div class="key-val-container">
+                <div class="td-label">
+                    Issuer ID
+                    <i class="fa fa-question-circle help-icon" data-tippy="Unique identifier of the issuer"></i>
+                </div>
+                <div>{{ address }}</div>
+            </div>
+            <div class="key-val-container">
+                <div class="td-label">
+                    Issuance transaction id
+                    <i class="fa fa-question-circle help-icon" data-tippy="Issuance transaction id"></i>
+                </div>
+                <div>{{ txid }}</div>
+            </div>
+        </div>
+        <div class="key-val-container" id="technical-expander" style="font-size: 0.8rem; cursor: pointer; color: #999;">
+            Show more technical details <i class="fa fa-chevron-down"></i>
+        </div>
+    </div>
+</div>
+{% if metadata %}
+<table class="pure-table table-md top-space-1">
+    <thead>
+        <tr>
+            <th colspan="2" class="text-center" style="font-weight: bold;">Additional information</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for value in metadata %}
+        <tr class="pure-table-{{ loop.cycle('odd', 'even') }}">
+            <td><b>{{ value.label }}</b></td>
+            <td>{{ value.value }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $('#technical-expander').click(function () {
+        if ($(this).attr('shown') == 1) {
+            $(this).html('Show more technical details <i class="fa fa-chevron-down"></i>');
+            $(this).attr('shown', '0');
+            $('#technical-more').hide();
+        } else {
+            $(this).html('Hide technical details <i class="fa fa-chevron-up"></i>');
+            $(this).attr('shown', '1');
+            $('#technical-more').show();
+        }
+    });
+</script>
+{% endblock %}

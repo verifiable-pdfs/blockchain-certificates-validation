@@ -16,6 +16,10 @@
     border-left: 3px solid #ccc;
     border-right: 3px solid #ccc;
 }
+.text-center{
+    text-align: center;
+}
+
 .center-img{
     display: block;
     margin-left: auto;
@@ -149,6 +153,35 @@
     display: none;
 }
 
+
+.help-icon{
+    color: #3f94d4;
+    cursor: pointer;
+}
+
+
+.panel{
+    border: 1px solid #cbcbcb;
+}
+.panel-subcontainer{
+    padding: 0.5rem;
+}
+.row-border-top{
+    border-top: 1px solid #cbcbcb;
+}
+.key-val-container{
+    margin-top: 0.2rem;
+    margin-bottom: 0.5rem;
+}
+.td-label{
+    font-size: 0.8rem;
+    font-weight: 200;
+    margin: 0.3rem 0 0.15rem 0;
+}
+.td-value-large{
+    font-weight: 200;
+    font-size: 2rem;
+}
 
 
 .testnet-warning{

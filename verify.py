@@ -47,6 +47,9 @@ def load_config():
     p.add_argument('--contact_email', type=str, help='email to contact for manual verification')
     p.add_argument('--general_text', type=str, help='text to appear at the top of the upload PDF page')
     p.add_argument('--main_site_url', type=str, help='the URL of the website for the "Back to main website" link')
+    p.add_argument('-b', '--blockchain_services', type=str,
+                   default='{ "services": [ {"blockcypher":{} } ], "required_successes": 1}',
+                   help='Which blockchain services to use and the minimum required successes')
     args, _ = p.parse_known_args()
     return args
 
@@ -74,23 +77,44 @@ def uploaded_file():
             pdf = pdfrw.PdfReader(temp_filename)
 
             issuer = cleanPdfString(pdf.Info.issuer)
-            address = cleanPdfString(pdf.Info.issuer_address)
-            # get metadata string and convert literal unicode escape
-            # sequences (only way to store unicode in PDF metadata)
-            # to unicode string
-            metadata_string = cleanPdfString(pdf.Info.metadata_object).encode('ascii').decode('unicode_escape')
             chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
+            if '/version' in pdf.Info:
+                version = pdf.Info.version
+                if version == '1':
+                    # TODO: Remove empty metadata_object from metadata v1
+                    # issuer is a json string in metadata v1
+                    issuer_json = json.loads(issuer)
+                    address = issuer_json['identity']['address']
+                    issuer = issuer_json['name'].encode('ascii').decode('unicode_escape')
+                    metadata_string = cleanPdfString(pdf.Info.metadata).encode('ascii').decode('unicode_escape')
+                else:
+                    raise ValueError('Unsupported metadata version')
+            else:
+                version = '0'
+                address = cleanPdfString(pdf.Info.issuer_address)
+                # get metadata string and convert literal unicode escape
+                # sequences (only way to store unicode in PDF metadata)
+                # to unicode string
+                metadata_string = cleanPdfString(pdf.Info.metadata_object).encode('ascii').decode('unicode_escape')
 
-            if(metadata_string):
-                # app.logger.info(metadata_string)
+            if metadata_string:
                 metadata = json.loads(metadata_string)
+                # If we have a metadata version, sort items by order and remove those with hide: True
+                if version != '0':
+                    visible_metadata = [val for val in metadata.values() if (
+                        not 'hide' in val or not val['hide']
+                    )]
+                    metadata = sorted(
+                        visible_metadata,
+                        key = lambda val: val['order'] if 'order' in val else 0
+                    )
             else:
                 metadata = {}
 
             # initialize txid
             txid = ""
 
-            if(chainpoint_proof_string):
+            if chainpoint_proof_string:
                 chainpoint_proof = json.loads(chainpoint_proof_string)
                 txid = chainpoint_proof['anchors'][0]['sourceId']
 
@@ -101,31 +125,47 @@ def uploaded_file():
             conf = Namespace(
                 testnet = bool(app.custom_config.get('testnet')),
                 f = [temp_filename], # validate_certificates as a lib requires a list of filenames
-                issuer_identifier = None # needs a value
+                issuer_identifier = None, # needs a value
+                blockchain_services = app.custom_config.get('blockchain_services')
             )
+
             result = validate_certificates(conf)['results'][0]
             if 'reason' in result and result['reason'] is not None:
                 if ('valid until: ' in result['reason']) or ('expired at:' in result['reason']):
                     timestamp = int(result['reason'].split(':')[1].strip())
                     result['expiry_date'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                elif result['reason'] == 'address was revoked':
+                    result['revoked'] = 'address'
+                elif result['reason'] == 'batch was revoked':
+                    result['revoked'] = 'batch'
                 elif result['reason'] == 'cert hash was revoked':
-                    result['revoked'] = True
+                    result['revoked'] = 'certificate'
+            if version == '0':
+                id_proofs = None
+            else:
+                id_proofs = 0
+                if 'verification' in result and result['verification'] is not None:
+                    for key, value in result['verification'].items():
+                        if value['success']:
+                            id_proofs += 1
 
             app.logger.info('Successfully validated ' + original_filename + " (" + temp_filename + ")")
 
-            return render_template('verification.html', result = result, filename = original_filename, issuer = issuer, address = address, txid = txid, metadata = metadata, **app.custom_config)
+            template = 'verification-v{}.html'.format(version)
+            return render_template(template, result = result, filename = original_filename, issuer = issuer, id_proofs=id_proofs, address = address, txid = txid, metadata = metadata, **app.custom_config)
 
         except pdfrw.errors.PdfParseError:
             app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
-            return render_template('verification.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
+            return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
     #    except json.decoder.JSONDecodeError:
     #        app.logger.info('No valid JSON chainpoint_proof metadata: ' + original_filename + " (" + temp_filename + ")")
     #        return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
-        except:
+        except Exception as error:
             app.logger.info('Unexpected error trying to validate ' +
                             original_filename + " (" + temp_filename +
-                            ") --- " + str(sys.exc_info()) )
-            return render_template('verification.html', error = "There was an unexpected error. Please try again later.", filename = original_filename, **app.custom_config)
+                            ") --- " + repr(error) )
+            print(repr(error))
+            return render_template('verification-v0.html', error = "There was an unexpected error. Please try again later or contact support", filename = original_filename, **app.custom_config)
         finally:
             # if file was written, delete
             if os.path.isfile(temp_filename):
