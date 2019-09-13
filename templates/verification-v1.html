@@ -19,6 +19,16 @@
             </div>
             {% if result.verification %}
             {% for key, value in result.verification.items() %}
+                {% if key == 'block_co' %}
+                    <div style="font-size: 1.15rem">
+                        {% if value.success %}
+                        Block.co verified the identity of this issuer <i class="fa fa-check-circle" style="color: green;"></i> <i class="fa fa-question-circle help-icon" data-tippy="Block.co has manually verified the identity of this issuer"></i>
+                        {% else %}
+                        Block.co hasn't verified the identity of this issuer <i class="fa fa-times-circle" style="color: red;"></i> <i class="fa fa-question-circle help-icon"
+                            data-tippy="Block.co hasn't verified the identity of this issuer, treat this certificate with caution"></i>
+                        {% endif %}
+                    </div>
+                {% endif %}
                 {% if key == 'domain' %}
                     <div>
                         Domain: {{value.url}}&nbsp;
