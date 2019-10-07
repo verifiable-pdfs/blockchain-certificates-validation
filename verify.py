@@ -10,7 +10,7 @@ import pdfrw
 from blockchain_certificates import __version__ as corelib_version
 from blockchain_certificates.validate_certificates import validate_certificates
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from argparse import Namespace
 from werkzeug import secure_filename
 from datetime import datetime
@@ -170,6 +170,9 @@ def uploaded_file():
             # if file was written, delete
             if os.path.isfile(temp_filename):
                 os.remove(temp_filename)
+    else:
+        return redirect(url_for('upload_file'))
+
 
 '''
 PDF metadata enclose strings with '(' and ')'. This method removes them so that
