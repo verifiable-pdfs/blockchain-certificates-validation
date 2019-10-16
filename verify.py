@@ -70,6 +70,10 @@ def render_invalid_template(error, original_filename, temp_filename):
     result = { 'status': 'invalid' }
     return render_template('verification-v0.html', result = result, filename = original_filename, **app.custom_config)
 
+def delete_tmp_file(temp_filename):
+    # if file was written, delete
+    if os.path.isfile(temp_filename):
+        os.remove(temp_filename)
 
 @app.route('/verification', methods = ['GET', 'POST'])
 def uploaded_file():
@@ -130,10 +134,17 @@ def uploaded_file():
             return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
         except Exception as error:
             return render_invalid_template(error, original_filename, temp_filename)
+        finally:
+            delete_tmp_file(temp_filename)
 
-        if not (address and metadata_string and txid):
+        # Check if all of these exist in the PDF:
+        # - metadata string
+        # - txid
+        # - address or 'issuer_address' inside the metadata object
+        if not (metadata_string and txid and (address or ('issuer_address' in metadata_string and metadata_string['issuer_address']))):
+            delete_tmp_file(temp_filename)
             return render_invalid_template(
-                'Could not find address or metadata_string or txid in PDF file', original_filename, temp_filename)
+                'Could not find metadata_string or txid in PDF file', original_filename, temp_filename)
 
         try:
             conf = Namespace(
@@ -173,9 +184,7 @@ def uploaded_file():
                             ") --- " + repr(error) )
             return render_template('verification-v0.html', error = "There was an unexpected error. Please try again later or contact support", filename = original_filename, **app.custom_config)
         finally:
-            # if file was written, delete
-            if os.path.isfile(temp_filename):
-                os.remove(temp_filename)
+            delete_tmp_file(temp_filename)
     else:
         return redirect(url_for('upload_file'))
 
