@@ -130,18 +130,18 @@ def uploaded_file():
                 chainpoint_proof = json.loads(chainpoint_proof_string)
                 txid = chainpoint_proof['anchors'][0]['sourceId']
         except pdfrw.errors.PdfParseError:
+            delete_tmp_file(temp_filename)
             app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
             return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
         except Exception as error:
-            return render_invalid_template(error, original_filename, temp_filename)
-        finally:
             delete_tmp_file(temp_filename)
+            return render_invalid_template(error, original_filename, temp_filename)
 
         # Check if all of these exist in the PDF:
         # - metadata string
         # - txid
         # - address or 'issuer_address' inside the metadata object
-        if not (metadata_string and txid and (address or ('issuer_address' in metadata_string and metadata_string['issuer_address']))):
+        if not (metadata_string and txid and (address or ('issuer_address' in metadata and metadata['issuer_address']))):
             delete_tmp_file(temp_filename)
             return render_invalid_template(
                 'Could not find metadata_string or txid in PDF file', original_filename, temp_filename)
