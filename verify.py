@@ -63,6 +63,14 @@ print('Using v%s of the blockchain-certificates library' % (corelib_version,))
 def upload_file():
     return render_template('verify.html', **app.custom_config)
 
+def render_invalid_template(error, original_filename, temp_filename):
+    app.logger.error('Unexpected error trying to validate ' +
+        original_filename + " (" + temp_filename +
+        ") --- " + repr(error) )
+    result = { 'status': 'invalid' }
+    return render_template('verification-v0.html', result = result, filename = original_filename, **app.custom_config)
+
+
 @app.route('/verification', methods = ['GET', 'POST'])
 def uploaded_file():
     if request.method == 'POST':
@@ -117,11 +125,17 @@ def uploaded_file():
             if chainpoint_proof_string:
                 chainpoint_proof = json.loads(chainpoint_proof_string)
                 txid = chainpoint_proof['anchors'][0]['sourceId']
+        except pdfrw.errors.PdfParseError:
+            app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
+            return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
+        except Exception as error:
+            return render_invalid_template(error, original_filename, temp_filename)
 
-            # testnet "ULand " prefix
-            # result = check_output(["validate-certificates", "-t", "-p", "554c616e6420", "-f", temp_filename])
-            # print(result.decode("utf-8"))
+        if not (address and metadata_string and txid):
+            return render_invalid_template(
+                'Could not find address or metadata_string or txid in PDF file', original_filename, temp_filename)
 
+        try:
             conf = Namespace(
                 testnet = bool(app.custom_config.get('testnet')),
                 f = [temp_filename], # validate_certificates as a lib requires a list of filenames
@@ -145,7 +159,7 @@ def uploaded_file():
             else:
                 id_proofs = 0
                 if 'verification' in result and result['verification'] is not None:
-                    for key, value in result['verification'].items():
+                    for _, value in result['verification'].items():
                         if value['success']:
                             id_proofs += 1
 
@@ -153,18 +167,10 @@ def uploaded_file():
 
             template = 'verification-v{}.html'.format(version)
             return render_template(template, result = result, filename = original_filename, issuer = issuer, id_proofs=id_proofs, address = address, txid = txid, metadata = metadata, **app.custom_config)
-
-        except pdfrw.errors.PdfParseError:
-            app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
-            return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
-    #    except json.decoder.JSONDecodeError:
-    #        app.logger.info('No valid JSON chainpoint_proof metadata: ' + original_filename + " (" + temp_filename + ")")
-    #        return render_template('verification.html', result_text = "Pdf without valid JSON chainpoint_proof", filename = original_filename)
         except Exception as error:
-            app.logger.info('Unexpected error trying to validate ' +
+            app.logger.error('Unexpected error trying to validate ' +
                             original_filename + " (" + temp_filename +
                             ") --- " + repr(error) )
-            print(repr(error))
             return render_template('verification-v0.html', error = "There was an unexpected error. Please try again later or contact support", filename = original_filename, **app.custom_config)
         finally:
             # if file was written, delete
