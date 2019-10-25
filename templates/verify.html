@@ -73,10 +73,10 @@
     var input = document.getElementById('file');
     var fake = document.getElementById('fake-file');
     var submit = document.getElementById('submit-form');
-    
+
     // Clear file input in case of browser back
     input.value = '';
-    
+
     input.onchange = function() {
         if (this.value && this.value.split('.').pop().toLowerCase() == 'pdf') {
             fake.innerHTML = this.value.split('\\').pop() + ' (change...)';

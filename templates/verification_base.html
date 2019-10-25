@@ -46,11 +46,11 @@
         <p>It has expired at: <strong>{{ result.expiry_date }} UTC</strong></p>
         {% endif %}
         {% if result.revoked == 'certificate' %}
-        <p>The certificate has been revoked.</strong></p>
+        <p>The certificate has been revoked.</p>
         {% elif result.revoked == 'address' %}
-        <p>The issuer has invalidated this issuing address.</strong></p>
+        <p>The issuer has invalidated this issuing address.</p>
         {% elif result.revoked == 'batch' %}
-        <p>The issuance containing this certificate has been revoked.</strong></p>
+        <p>The issuance containing this certificate has been revoked.</p>
         {% endif %}
     </div>
     <div class="pure-u-1 top-space-1">

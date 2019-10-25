@@ -10,7 +10,8 @@ import pdfrw
 from blockchain_certificates import __version__ as corelib_version
 from blockchain_certificates.validate_certificates import validate_certificates
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
+from flask_cors import cross_origin
 from argparse import Namespace
 from werkzeug import secure_filename
 from datetime import datetime
@@ -74,6 +75,115 @@ def delete_tmp_file(temp_filename):
     # if file was written, delete
     if os.path.isfile(temp_filename):
         os.remove(temp_filename)
+
+@app.route('/verification-api', methods = ['OPTIONS', 'POST'])
+@cross_origin()
+def uploaded_file_api():
+    try:
+        f = request.files['file']
+        original_filename = f.filename
+        temp_filename = ''.join(random.choice(string.ascii_lowercase) for i in range(6)) + "-" + secure_filename(f.filename)
+
+        f.save(temp_filename)
+
+        # if not a valid pdf or sth else is wrong an exception will be raised "Unexpected error"
+        pdf = pdfrw.PdfReader(temp_filename)
+
+        issuer = cleanPdfString(pdf.Info.issuer)
+        chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
+        if '/version' in pdf.Info:
+            version = pdf.Info.version
+            if version == '1':
+                # TODO: Remove empty metadata_object from metadata v1
+                # issuer is a json string in metadata v1
+                issuer_json = json.loads(issuer)
+                address = issuer_json['identity']['address']
+                issuer = issuer_json['name'].encode('ascii').decode('unicode_escape')
+                metadata_string = cleanPdfString(pdf.Info.metadata).encode('ascii').decode('unicode_escape')
+            else:
+                raise ValueError('Unsupported metadata version')
+        else:
+            version = '0'
+            address = cleanPdfString(pdf.Info.issuer_address)
+            # get metadata string and convert literal unicode escape
+            # sequences (only way to store unicode in PDF metadata)
+            # to unicode string
+            metadata_string = cleanPdfString(pdf.Info.metadata_object).encode('ascii').decode('unicode_escape')
+
+        if metadata_string:
+            metadata = json.loads(metadata_string)
+            # If we have a metadata version, sort items by order and remove those with hide: True
+            if version != '0':
+                visible_metadata = [val for val in metadata.values() if (
+                    not 'hide' in val or not val['hide']
+                )]
+                metadata = sorted(
+                    visible_metadata,
+                    key = lambda val: val['order'] if 'order' in val else 0
+                )
+        else:
+            metadata = {}
+
+        # initialize txid
+        txid = ""
+
+        if chainpoint_proof_string:
+            chainpoint_proof = json.loads(chainpoint_proof_string)
+            txid = chainpoint_proof['anchors'][0]['sourceId']
+    except pdfrw.errors.PdfParseError:
+        delete_tmp_file(temp_filename)
+        app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
+        return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
+    except Exception as error:
+        delete_tmp_file(temp_filename)
+        return render_invalid_template(error, original_filename, temp_filename)
+
+    # Check if all of these exist in the PDF:
+    # - metadata string
+    # - txid
+    # - address or 'issuer_address' inside the metadata object
+    if not (metadata_string and txid and (address or ('issuer_address' in metadata and metadata['issuer_address']))):
+        delete_tmp_file(temp_filename)
+        return render_invalid_template(
+            'Could not find metadata_string or txid in PDF file', original_filename, temp_filename)
+
+    try:
+        conf = Namespace(
+            testnet = bool(app.custom_config.get('testnet')),
+            f = [temp_filename], # validate_certificates as a lib requires a list of filenames
+            issuer_identifier = None, # needs a value
+            blockchain_services = app.custom_config.get('blockchain_services')
+        )
+
+        result = validate_certificates(conf)['results'][0]
+        if 'reason' in result and result['reason'] is not None:
+            if ('valid until: ' in result['reason']) or ('expired at:' in result['reason']):
+                timestamp = int(result['reason'].split(':')[1].strip())
+                result['expiry_date'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+            elif result['reason'] == 'address was revoked':
+                result['revoked'] = 'address'
+            elif result['reason'] == 'batch was revoked':
+                result['revoked'] = 'batch'
+            elif result['reason'] == 'cert hash was revoked':
+                result['revoked'] = 'certificate'
+        if version == '0':
+            id_proofs = None
+        else:
+            id_proofs = 0
+            if 'verification' in result and result['verification'] is not None:
+                for _, value in result['verification'].items():
+                    if value['success']:
+                        id_proofs += 1
+
+        return jsonify(dict(result = result, filename = original_filename, issuer = issuer, id_proofs=id_proofs, address = address, txid = txid, metadata = metadata))
+    except Exception as error:
+        app.logger.error('Unexpected error trying to validate ' +
+                        original_filename + " (" + temp_filename +
+                        ") --- " + repr(error) )
+        return jsonify({ "error": "There was an unexpected error. Please try again later or contact support" })
+    finally:
+        delete_tmp_file(temp_filename)
+
 
 @app.route('/verification', methods = ['GET', 'POST'])
 def uploaded_file():
