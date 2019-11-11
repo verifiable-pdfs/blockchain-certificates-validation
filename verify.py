@@ -10,7 +10,7 @@ import pdfrw
 from blockchain_certificates import __version__ as corelib_version
 from blockchain_certificates.validate_certificates import validate_certificates
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response
 from flask_cors import cross_origin
 from argparse import Namespace
 from werkzeug import secure_filename
@@ -76,6 +76,7 @@ def delete_tmp_file(temp_filename):
     if os.path.isfile(temp_filename):
         os.remove(temp_filename)
 
+
 @app.route('/verification-api', methods = ['OPTIONS', 'POST'])
 @cross_origin()
 def uploaded_file_api():
@@ -121,6 +122,22 @@ def uploaded_file_api():
                     visible_metadata,
                     key = lambda val: val['order'] if 'order' in val else 0
                 )
+            else:
+                # It's the old metadata format, transform to the new one
+                # Extract issuer and address and transform metadata into list of objects
+                issuer = metadata.pop('issuer')
+                if not address:
+                    address = metadata.pop('issuer_address')
+                metadata_list = []
+                i = 0
+                for k, v in metadata.items():
+                    metadata_list.append({
+                        'label': k,
+                        'order': i,
+                        'value': v
+                    })
+                    i += 1
+                metadata = metadata_list
         else:
             metadata = {}
 
@@ -133,19 +150,21 @@ def uploaded_file_api():
     except pdfrw.errors.PdfParseError:
         delete_tmp_file(temp_filename)
         app.logger.info('Not a pdf file: ' + original_filename + " (" + temp_filename + ")")
-        return render_template('verification-v0.html', error = "Not a pdf file.", filename = original_filename, **app.custom_config)
+        res = {'detail': 'Not a valid PDF file.'}
+        return make_response(jsonify(res), 400)
     except Exception as error:
         delete_tmp_file(temp_filename)
-        return render_invalid_template(error, original_filename, temp_filename)
+        res = {'detail': 'Could not extract the validation proof from the PDF file'}
+        return make_response(jsonify(res), 400)
 
     # Check if all of these exist in the PDF:
     # - metadata string
     # - txid
-    # - address or 'issuer_address' inside the metadata object
-    if not (metadata_string and txid and (address or ('issuer_address' in metadata and metadata['issuer_address']))):
+    # - address
+    if not (metadata_string and txid and address and issuer):
         delete_tmp_file(temp_filename)
-        return render_invalid_template(
-            'Could not find metadata_string or txid in PDF file', original_filename, temp_filename)
+        res = {'detail': 'Could not extract the validation proof from the PDF file'}
+        return make_response(jsonify(res), 400)
 
     try:
         conf = Namespace(
@@ -180,7 +199,13 @@ def uploaded_file_api():
         app.logger.error('Unexpected error trying to validate ' +
                         original_filename + " (" + temp_filename +
                         ") --- " + repr(error) )
-        return jsonify({ "error": "There was an unexpected error. Please try again later or contact support" })
+        res = {}
+        if "incompatible with current block chain" in str(error):
+            res['result'] = {"result": {"status": "invalid"}}
+            res['filename'] = original_filename
+        else:
+            res['detail'] = "There was an unexpected error. Please try again later or contact support"
+        return jsonify(res)
     finally:
         delete_tmp_file(temp_filename)
 
