@@ -102,7 +102,8 @@ def uploaded_file_api():
                 issuer = issuer_json['name'].encode('ascii').decode('unicode_escape')
                 metadata_string = cleanPdfString(pdf.Info.metadata).encode('ascii').decode('unicode_escape')
             else:
-                raise ValueError('Unsupported metadata version')
+                res = {'detail': 'Invalid metadata version in the PDF.'}
+                return make_response(jsonify(res), 400)
         else:
             version = '0'
             address = cleanPdfString(pdf.Info.issuer_address)
@@ -129,13 +130,20 @@ def uploaded_file_api():
                 if not address:
                     address = metadata.pop('issuer_address')
                 metadata_list = []
+
+                LABELS_ORDERING = [
+                    'First Name',
+                    'Fathers Name',
+                    'Last Name',
+                    'Degree Type',
+                    'Program of Study',
+                    'Date of Issue'
+                ]
+
                 i = 0
-                for k, v in metadata.items():
-                    metadata_list.append({
-                        'label': k,
-                        'order': i,
-                        'value': v
-                    })
+                for l in LABELS_ORDERING:
+                    if l in metadata and metadata[l]:
+                        metadata_list.append({ 'label': l, 'order': i, 'value': metadata[l] })
                     i += 1
                 metadata = metadata_list
         else:
@@ -194,7 +202,7 @@ def uploaded_file_api():
                     if value['success']:
                         id_proofs += 1
 
-        return jsonify(dict(result = result, filename = original_filename, issuer = issuer, id_proofs=id_proofs, address = address, txid = txid, metadata = metadata))
+        return jsonify(dict(result = result, filename = original_filename, issuer = issuer, id_proofs=id_proofs, address=address, txid=txid, metadata=metadata))
     except Exception as error:
         app.logger.error('Unexpected error trying to validate ' +
                         original_filename + " (" + temp_filename +
