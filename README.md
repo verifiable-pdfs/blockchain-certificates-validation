@@ -22,9 +22,9 @@ If you pull an updated version of the webapp (e.g. with `git pull`), you need to
 
 ### Updating
 When a new version of the underlying libraries is available, there will be a warning displayed at the top of every page of the webapp. Follow the procedure below to update to the latest version.
-> cd blockchain-certificates-validation
-> git pull
-> . venv/bin/activate
+> cd blockchain-certificates-validation  
+> git pull  
+> . venv/bin/activate  
 > pip install --upgrade blockchain-certificates
 
 You must rerun the `customize.sh` script in order to copy your custom files to the relevant locations.
