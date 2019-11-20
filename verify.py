@@ -166,10 +166,9 @@ def uploaded_file_api():
         return make_response(jsonify(res), 400)
 
     # Check if all of these exist in the PDF:
-    # - metadata string
     # - txid
     # - address
-    if not (metadata_string and txid and address and issuer):
+    if not (txid and address and issuer):
         delete_tmp_file(temp_filename)
         res = {'detail': 'Could not extract the validation proof from the PDF file'}
         return make_response(jsonify(res), 400)
@@ -281,13 +280,12 @@ def uploaded_file():
             return render_invalid_template(error, original_filename, temp_filename)
 
         # Check if all of these exist in the PDF:
-        # - metadata string
         # - txid
         # - address or 'issuer_address' inside the metadata object
-        if not (metadata_string and txid and (address or ('issuer_address' in metadata and metadata['issuer_address']))):
+        if not (txid and (address or ('issuer_address' in metadata and metadata['issuer_address']))):
             delete_tmp_file(temp_filename)
             return render_invalid_template(
-                'Could not find metadata_string or txid in PDF file', original_filename, temp_filename)
+                'Could not find txid in PDF file', original_filename, temp_filename)
 
         try:
             conf = Namespace(
