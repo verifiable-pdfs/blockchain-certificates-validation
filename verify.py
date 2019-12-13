@@ -48,7 +48,7 @@ def load_config():
     p.add_argument('--contact_email', type=str, help='email to contact for manual verification')
     p.add_argument('--general_text', type=str, help='text to appear at the top of the upload PDF page')
     p.add_argument('--main_site_url', type=str, help='the URL of the website for the "Back to main website" link')
-    p.add_argument('-b', '--blockchain_services', type=str,
+    p.add_argument('--blockchain_services', type=str,
                    default='{ "services": [ {"blockcypher":{} } ], "required_successes": 1}',
                    help='Which blockchain services to use and the minimum required successes')
     args, _ = p.parse_known_args()
