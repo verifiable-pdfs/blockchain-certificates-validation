@@ -1,4 +1,4 @@
-flask==0.12.1
+flask==1.0
 Werkzeug==0.16.1
 gunicorn==19.7.1
 flask-cors==3.0.8
