@@ -13,7 +13,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response
 from flask_cors import cross_origin
 from argparse import Namespace
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from datetime import datetime
 
 app = Flask(__name__)
