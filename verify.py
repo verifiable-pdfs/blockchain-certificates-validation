@@ -94,6 +94,9 @@ def uploaded_file_api():
         chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
         if '/version' in pdf.Info:
             version = pdf.Info.version
+            if version == '2':
+                # Handle version 2 as 1, multiple owners are supported only in js validator
+                version = '1'
             if version == '1':
                 # TODO: Remove empty metadata_object from metadata v1
                 # issuer is a json string in metadata v1
@@ -234,6 +237,9 @@ def uploaded_file():
             chainpoint_proof_string = cleanPdfString(pdf.Info.chainpoint_proof)
             if '/version' in pdf.Info:
                 version = pdf.Info.version
+                if version == '2':
+                    # Handle version 2 as 1, multiple owners are supported only in js validator
+                    version = '1'
                 if version == '1':
                     # TODO: Remove empty metadata_object from metadata v1
                     # issuer is a json string in metadata v1
