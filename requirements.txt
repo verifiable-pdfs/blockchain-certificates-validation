@@ -12,7 +12,7 @@ fpdf==1.7.2
 gunicorn==20.0.4
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 merkletools==1.0.3
 mpmath==1.1.0
